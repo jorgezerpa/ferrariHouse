@@ -1,12 +1,17 @@
 import * as THREE from 'three'
+import { gsap } from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { ferrariModels } from '../constants/ferraries';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
+let renderer:any, scene:any;
 
 export function initViewer(container:HTMLElement, itemId:string){
+        document.body.appendChild(closeViewer(container))
+
+
         const model = ferrariModels[itemId]
-        let renderer = new THREE.WebGLRenderer({alpha:true});
+        renderer = new THREE.WebGLRenderer({alpha:true});
         renderer.setClearColor(0x000000, 0)
         renderer.setSize( container.clientWidth, container.clientHeight ); 
         container.appendChild( renderer.domElement );
@@ -17,7 +22,7 @@ export function initViewer(container:HTMLElement, itemId:string){
         camera.position.set(cameraInitialPosition.x, cameraInitialPosition.y, cameraInitialPosition.z)
         camera.rotation.set(cameraInitialRotation.x, cameraInitialRotation.y, cameraInitialRotation.z)
 
-        let scene = new THREE.Scene(); 
+        scene = new THREE.Scene(); 
 
         const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -68,3 +73,31 @@ export function initViewer(container:HTMLElement, itemId:string){
         });
 
 }
+
+export function closeViewer(container:HTMLElement){
+    const closeButton = document.createElement('div')
+    closeButton.style.position="fixed"
+    closeButton.style.top="20px"
+    closeButton.style.right="20px"
+    closeButton.style.zIndex="50"
+    closeButton.style.color="white"
+    closeButton.style.fontSize="1rem"
+    closeButton.style.fontWeight="bold"
+    closeButton.innerHTML = "close"
+
+    closeButton.addEventListener('click', ()=>{
+        container.removeChild(renderer.domElement);
+        scene.traverse((obj:any) => {
+            if (obj.isMesh) {
+                obj.geometry.dispose();
+                obj.material.dispose();
+                scene.remove(obj);
+        }
+        });
+        document.body.removeChild(container)
+
+
+        gsap.to('.hero', { opacity:1, duration:1 })
+    })
+    return closeButton
+}   
