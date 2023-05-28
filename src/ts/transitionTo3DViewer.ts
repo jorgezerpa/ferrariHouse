@@ -30,7 +30,7 @@ items.forEach(item=>{
         gsap.to(viwerContainer, { 
             width:'100vw', height:'100vh', duration:.5, delay:4,
             onComplete:()=>{
-                initViewer()
+                initViewer(viwerContainer)
             }
         })
         
