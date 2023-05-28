@@ -1,9 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { ferrariModels } from '../constants/ferraries';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+
 
 export function initViewer(container:HTMLElement, itemId:string){
-    console.log(ferrariModels[itemId])
         let renderer = new THREE.WebGLRenderer({alpha:true});
         renderer.setClearColor(0x000000, 0)
         renderer.setSize( container.clientWidth, container.clientHeight ); 
@@ -16,11 +17,34 @@ export function initViewer(container:HTMLElement, itemId:string){
 
         const controls = new OrbitControls(camera, renderer.domElement)
 
-        const cubeGeo = new THREE.BoxGeometry(1,1,1)
-        const cubeMat = new THREE.MeshBasicMaterial({color:0xFF0000})
-        const cube = new THREE.Mesh(cubeGeo, cubeMat)
+        // LIGHTS
+        const ambientalLight = new THREE.AmbientLight(0xFFFFFF, .9)
+        scene.add(ambientalLight)
+        const directionalLight = new THREE.DirectionalLight(0xFFFFFF, .9)
+        scene.add(directionalLight)
 
-        scene.add(cube)
+
+
+        
+        // -----------------------
+        
+        let loader = new GLTFLoader();
+        loader.load(
+            ferrariModels[itemId].modelPath,
+            function (gltf) {
+              scene.add(gltf.scene);
+            },
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            },
+            function (error) {
+                console.log('An error happened', error);
+            }
+          );        
+        
+        // -----------------------
+
+
 
 
         function animate() {
