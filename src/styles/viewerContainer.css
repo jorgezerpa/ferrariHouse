@@ -1,0 +1,7 @@
+.viewerContainer {
+  display: flex;
+  background-color: purple;
+}
+.viewerContainer div {
+  background-color: transparent;
+}
