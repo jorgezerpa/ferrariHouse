@@ -5,13 +5,17 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 
 export function initViewer(container:HTMLElement, itemId:string){
+        const model = ferrariModels[itemId]
         let renderer = new THREE.WebGLRenderer({alpha:true});
         renderer.setClearColor(0x000000, 0)
         renderer.setSize( container.clientWidth, container.clientHeight ); 
         container.appendChild( renderer.domElement );
 
-        let camera = new THREE.PerspectiveCamera( 75, container.clientWidth / container.clientHeight, 0.1, 1000 );
-        camera.position.z = 5;
+        let camera = new THREE.PerspectiveCamera( 75, container.clientWidth / container.clientHeight, .0001, 30 );
+        const cameraInitialPosition = new THREE.Vector3(model.views.initial.position[0],model.views.initial.position[1],model.views.initial.position[2])
+        const cameraInitialRotation = new THREE.Vector3(model.views.initial.rotation[0],model.views.initial.rotation[1],model.views.initial.rotation[2])
+        camera.position.set(cameraInitialPosition.x, cameraInitialPosition.y, cameraInitialPosition.z)
+        camera.rotation.set(cameraInitialRotation.x, cameraInitialRotation.y, cameraInitialRotation.z)
 
         let scene = new THREE.Scene(); 
 
@@ -30,9 +34,13 @@ export function initViewer(container:HTMLElement, itemId:string){
         
         let loader = new GLTFLoader();
         loader.load(
-            ferrariModels[itemId].modelPath,
+            model.modelPath,
             function (gltf) {
               scene.add(gltf.scene);
+              window.addEventListener('click', ()=>{
+                console.log("position--> ",`[${ camera.position.x.toFixed(3)},${ camera.position.y.toFixed(3)},${ camera.position.z.toFixed(3)}]`)
+                console.log("rotation--> ",`[${ camera.rotation.x.toFixed(3)},${ camera.rotation.y.toFixed(3)},${ camera.rotation.z.toFixed(3)}]`)
+              })
             },
             function (xhr) {
                 console.log((xhr.loaded / xhr.total * 100) + '% loaded');
