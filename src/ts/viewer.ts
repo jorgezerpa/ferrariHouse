@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { ferrariModels } from '../constants/ferraries';
 
-export function initViewer(container:HTMLElement){
-    console.log('hi')
+export function initViewer(container:HTMLElement, itemId:string){
+    console.log(ferrariModels[itemId])
         let renderer = new THREE.WebGLRenderer({alpha:true});
         renderer.setClearColor(0x000000, 0)
         renderer.setSize( container.clientWidth, container.clientHeight ); 
